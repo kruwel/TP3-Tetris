@@ -107,8 +107,8 @@ namespace WindowsFormsApplication1
         TypeBloc GenererPieceAJouer()
         {
             Random rnd = new Random();
-            int pieceChoisis = rnd.Next(2, 7 + 1);
-            //int pieceChoisis = 5;
+            //int pieceChoisis = rnd.Next(2, 7 + 1);
+            int pieceChoisis = 3;
             TypeBloc blocChoisis = tabBlocPossible[pieceChoisis];
             return blocChoisis;
         }
@@ -142,10 +142,10 @@ namespace WindowsFormsApplication1
                     tabRotationVide[2,2] = TypeBloc.L;
                     break;
                 case TypeBloc.Ligne:
-                    tabRotationVide[0,3] = TypeBloc.Ligne;
-                    tabRotationVide[1,3] = TypeBloc.Ligne;
-                    tabRotationVide[2,3] = TypeBloc.Ligne;
-                    tabRotationVide[3,3] = TypeBloc.Ligne;
+                    tabRotationVide[0,0] = TypeBloc.Ligne;
+                    tabRotationVide[1,0] = TypeBloc.Ligne;
+                    tabRotationVide[2,0] = TypeBloc.Ligne;
+                    tabRotationVide[3,0] = TypeBloc.Ligne;
                     break;
                 case TypeBloc.S:
                     tabRotationVide[0,2] = TypeBloc.S;
@@ -174,14 +174,10 @@ namespace WindowsFormsApplication1
             PictureBox pic = toutesImagesVisuelles[_yPosition, _xPosition];
             TypeBloc[,] grilleJeu = InitialiserSurfaceDeJeu();
             TypeBloc[,] grilleAvecBloc = ChoixPiece(pieceChoisis);
-            _xPosition = _xPosition - grilleAvecBloc.GetLength(1)/2;
-            if (grilleAvecBloc.GetLength(1) == 3)
+            _xPosition = _xPosition - grilleAvecBloc.GetLength(1)/2 -1;
+            if (grilleAvecBloc.GetLength(1) == 2)
             {
-                _xPosition -= 1;
-            }
-            else if (grilleAvecBloc.GetLength(1) == 4)
-            {
-                _xPosition -= 1;
+                _xPosition++;
             }
             for ( int iPos =0; iPos < grilleAvecBloc.GetLength(0); iPos++)
             {
@@ -246,18 +242,18 @@ namespace WindowsFormsApplication1
         void DeplacementPiece()
         {
             PictureBox pic = toutesImagesVisuelles[_yPosition, _xPosition];
-            TypeBloc[,] grilleJeu = InitialiserSurfaceDeJeu();
             TypeBloc[,] grilleAvecBloc = ChoixPiece(pieceGenerer);
             for (int iPos = 0; iPos < grilleJeu.GetLength(0); iPos++)
             {
                 for (int jPos = 0; jPos < grilleJeu.GetLength(1); jPos++)
                 {
-                    if (grilleJeu[iPos, jPos] != TypeBloc.Gelé)
+                    if (grilleJeu[_yPosition + iPos - 1, _xPosition + jPos - 1] != TypeBloc.None)
                     {
-                        grilleJeu[iPos, jPos] = TypeBloc.None;
-                        pic = toutesImagesVisuelles[iPos,jPos];
+                        grilleJeu[_yPosition + iPos - 1, _xPosition + jPos - 1] = TypeBloc.None;
+                        pic = toutesImagesVisuelles[_yPosition + iPos - 1, _xPosition + jPos - 1];
                         pic.BackColor = Color.Black;
                     }
+                    
                 }
             }
 
@@ -345,7 +341,7 @@ namespace WindowsFormsApplication1
                     if (grilleJeu[_yPosition + 1, _xPosition] != TypeBloc.Gelé)
                     {
                         _yPosition++;
-
+                        DeplacementPiece();
                     }
 
                 }
@@ -353,20 +349,23 @@ namespace WindowsFormsApplication1
             // Right
             else if (e.KeyChar == 'd')
             {
-                int iPos = grilleAvecBloc.GetLength(0);
+                int iPos = grilleAvecBloc.GetLength(1);
                 if (_xPosition + iPos < grilleJeu.GetLength(1) && grilleJeu[_yPosition, _xPosition + 1] != TypeBloc.Gelé)
                 {
                     _xPosition++;
+                    DeplacementPiece();
                 }
             }
             // Left
             else if (e.KeyChar == 'a')
             {
+                int iPos = grilleAvecBloc.GetLength(0);
                 if (_xPosition != 0)
                 {
                     if (grilleJeu[_yPosition, _xPosition - 1] != TypeBloc.Gelé)
                     {
                         _xPosition--;
+                        DeplacementPiece();
                     }
                 }
             }
